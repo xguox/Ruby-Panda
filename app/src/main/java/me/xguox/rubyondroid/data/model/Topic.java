@@ -1,4 +1,4 @@
-package me.xguox.rubyondroid;
+package me.xguox.rubyondroid.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
