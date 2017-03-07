@@ -1,5 +1,6 @@
 package me.xguox.rubyondroid;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import me.xguox.rubyondroid.adapter.TopicAdapter;
@@ -18,14 +18,15 @@ import me.xguox.rubyondroid.data.model.Topic;
 import me.xguox.rubyondroid.network.TopicResponse;
 import me.xguox.rubyondroid.network.TopicService;
 import me.xguox.rubyondroid.utils.ApiUtil;
+import me.xguox.rubyondroid.utils.OnItemClickListener;
 import me.xguox.rubyondroid.utils.OnLoadMoreListener;
 import retrofit2.Callback;
 
-public class TopicsActivity extends AppCompatActivity {
+public class TopicListActivity extends AppCompatActivity {
+    private static final String TAG = "TopicListActivity";
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private TopicAdapter mAdapter;
-    private List<Topic> mTopicList;
     private ProgressBar progressBar;
     private SwipeRefreshLayout mSwipeContainer;
     private TopicService mService;
@@ -33,9 +34,8 @@ public class TopicsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_topics);
+        setContentView(R.layout.activity_topic_list);
         mService = ApiUtil.getTopicService();
-        mTopicList = new ArrayList<>();
         setupRecyclerView();
         mAdapter.setLoadMoreListener(new OnLoadMoreListener() {
             @Override
@@ -67,12 +67,23 @@ public class TopicsActivity extends AppCompatActivity {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 mLinearLayoutManager.getOrientation());
         mRecyclerView.addItemDecoration(dividerItemDecoration);
-        mAdapter = new TopicAdapter(TopicsActivity.this, mRecyclerView);
+        mAdapter = new TopicAdapter(TopicListActivity.this, mRecyclerView);
+        mAdapter.setClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Log.d(TAG, "onItemClick: posihehe" + position);
+                Topic topic = mAdapter.getTopicList().get(position);
+
+                Intent intent = new Intent(TopicListActivity.this, TopicActivity.class);
+                intent.putExtra(TopicActivity.TOPIC, "hehe");
+                TopicListActivity.this.startActivity(intent);
+            }
+        });
         mRecyclerView.setAdapter(mAdapter);
     }
 
     public void loadTopics(final boolean loadingMore) {
-        int offset = mLinearLayoutManager.getItemCount();
+        int offset = loadingMore ? mLinearLayoutManager.getItemCount() : 0;
         mService.getTopics(offset).enqueue(new Callback<TopicResponse>() {
             @Override
             public void onResponse(retrofit2.Call<TopicResponse> call, retrofit2.Response<TopicResponse> response) {
@@ -80,7 +91,6 @@ public class TopicsActivity extends AppCompatActivity {
                     List<Topic> topicList = response.body().getTopics();
 
                     if (loadingMore) {
-                        mTopicList.clear();
                         mAdapter.setProgressMore(false);
                         mAdapter.addItemMore(topicList);
                         mAdapter.setMoreLoading(false);
@@ -97,7 +107,7 @@ public class TopicsActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(retrofit2.Call<TopicResponse> call, Throwable t) {
-                Log.d("TopicsActivity", "error loading from API");
+                Log.d("TopicListActivity", "error loading from API");
             }
         });
     }

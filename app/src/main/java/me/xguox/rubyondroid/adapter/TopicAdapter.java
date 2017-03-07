@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.xguox.rubyondroid.utils.OnItemClickListener;
 import me.xguox.rubyondroid.utils.OnLoadMoreListener;
 import me.xguox.rubyondroid.R;
 import me.xguox.rubyondroid.data.model.Topic;
@@ -30,6 +31,7 @@ public class TopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private List<Topic> mTopicList;
     private Context mContext;
     private OnLoadMoreListener loadMoreListener;
+    private OnItemClickListener mClickListener;
     private boolean isMoreLoading = false;
     private int visibleThreshold = 5;
     int firstVisibleItem, visibleItemCount, totalItemCount;
@@ -43,8 +45,16 @@ public class TopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         setRecyclerView(recyclerView);
     }
 
+    public List<Topic> getTopicList() {
+        return mTopicList;
+    }
+
     public void setLoadMoreListener(OnLoadMoreListener loadMoreListener) {
         this.loadMoreListener = loadMoreListener;
+    }
+
+    public void setClickListener(OnItemClickListener mClickListener) {
+        this.mClickListener = mClickListener;
     }
 
     public void setRecyclerView(RecyclerView view) {
@@ -148,7 +158,7 @@ public class TopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    public static class TopicViewHolder extends RecyclerView.ViewHolder {
+    public class TopicViewHolder extends RecyclerView.ViewHolder {
         private TextView mTitle, mRepliesCount, mNodeName, mAuthorName, mRepliedAt;
         private ImageView mAvatar;
 
@@ -167,10 +177,18 @@ public class TopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             mTitle = (TextView) itemView.findViewById(R.id.title);
             mTitle.setTextColor(Color.parseColor("#111111"));
             mAvatar = (ImageView) itemView.findViewById(R.id.avatar);
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    mClickListener.onItemClick(position);
+                }
+            });
         }
     }
 
-    public static class LoadingViewHolder extends RecyclerView.ViewHolder {
+    public class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
 
         public LoadingViewHolder(View itemView) {

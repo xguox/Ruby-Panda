@@ -9,6 +9,6 @@ import retrofit2.http.Query;
  */
 
 public interface TopicService {
-    @GET("topics.json")
+    @GET("topics.json?limit=35")
     Call<TopicResponse> getTopics(@Query("offset") int offset);
 }
