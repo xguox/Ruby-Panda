@@ -71,11 +71,10 @@ public class TopicListActivity extends AppCompatActivity {
         mAdapter.setClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                Log.d(TAG, "onItemClick: posihehe" + position);
                 Topic topic = mAdapter.getTopicList().get(position);
 
                 Intent intent = new Intent(TopicListActivity.this, TopicActivity.class);
-                intent.putExtra(TopicActivity.TOPIC, "hehe");
+                intent.putExtra(TopicActivity.TOPIC, topic);
                 TopicListActivity.this.startActivity(intent);
             }
         });

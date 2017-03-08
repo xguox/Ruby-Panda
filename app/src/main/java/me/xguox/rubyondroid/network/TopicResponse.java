@@ -13,11 +13,17 @@ import me.xguox.rubyondroid.data.model.Topic;
 
 public class TopicResponse {
 
+    private Topic topic;
+
     @SerializedName("topics")
     @Expose
     private List<Topic> topics = null;
 
     public List<Topic> getTopics() {
         return topics;
+    }
+
+    public Topic getTopic() {
+        return topic;
     }
 }

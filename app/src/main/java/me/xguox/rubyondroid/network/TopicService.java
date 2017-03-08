@@ -2,6 +2,7 @@ package me.xguox.rubyondroid.network;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -11,4 +12,7 @@ import retrofit2.http.Query;
 public interface TopicService {
     @GET("topics.json?limit=35")
     Call<TopicResponse> getTopics(@Query("offset") int offset);
+
+    @GET("topics/{id}.json")
+    Call<TopicResponse> getTopic(@Path("id") int id);
 }
